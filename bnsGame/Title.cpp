@@ -1,9 +1,8 @@
 #include "Title.hpp"
 #include <iostream>
 
-bnsGame::Title::Title(const InitData& init_) : IScene(init_) {
-    std::cout << "タイトルシーン" << std::endl;
-}
+bnsGame::Title::Title(const InitData& init_)
+: IScene(init_) {}
 
 void bnsGame::Title::Update() {
     std::string s;

@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneMaster.hpp"
+#include "MyAllocator.hpp"
 
 namespace bnsGame {
     enum class Scene {
@@ -9,7 +10,9 @@ namespace bnsGame {
 
     class GameData {
     public:
-        constexpr GameData() = default;
+        std::unique_ptr<allocator::iMemoryAllocator> m_alloc;
+
+        GameData(void* ptr_, const size_t size_) : m_alloc(std::make_unique<allocator::MyAllocator>(ptr_, size_)) {}
     };
 
     using MyScene = bnsGame::utl::SceneMaster<Scene, GameData>;

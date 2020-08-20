@@ -2,8 +2,12 @@
 #include <iostream>
 
 bnsGame::Game::Game(const InitData& init_)
-: IScene(init_) {
-    std::cout << "ƒQ[ƒ€ƒV[ƒ“" << std::endl;
+    : IScene(init_)
+    , m_displayBuffer(){
+    system("cls");
+    for (auto buf : m_displayBuffer) {
+        buf = reinterpret_cast<char*>(getData().m_alloc->Alloc(12));
+    }
 }
 
 void bnsGame::Game::Update() {
@@ -11,7 +15,13 @@ void bnsGame::Game::Update() {
     std::cin >> s;
 
     if (s == "y") {
-        ChangeScene(bnsGame::Scene::Title);
+        ExitGame();
+    }
+}
+
+void bnsGame::Game::UpdateChangeOut() {
+    for (auto buf : m_displayBuffer) {
+        getData().m_alloc->Free(buf);
     }
 }
 

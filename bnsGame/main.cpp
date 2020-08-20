@@ -5,11 +5,10 @@
 #include "Game.hpp"
 
 int main() {
-    /*size_t size = 1 * 1024 * 1024;
+    constexpr size_t size = 1 * 1024 * 1024;
     void* ptr = new char[size];
-    std::unique_ptr<allocator::iMemoryAllocator> allocate = std::make_unique<allocator::MyAllocator>(ptr, size);*/
 
-    bnsGame::MyScene manager;
+    bnsGame::MyScene manager(std::make_shared<bnsGame::GameData>(ptr, size));
     manager.Add<bnsGame::Title>(bnsGame::Scene::Title).Add<bnsGame::Game>(bnsGame::Scene::Game);
 
     while (manager.Update()) {

@@ -131,7 +131,7 @@ namespace bnsGame::utl {
         }
 
         /// <summary>
-        /// エラーの発生を通知します。
+        /// ゲームの終了を通知します。
         /// </summary>
         /// <remarks>
         /// この関数を呼ぶと、以降の SceneMaster::Update() / UpdateAndDraw() が false を返します。
@@ -139,8 +139,8 @@ namespace bnsGame::utl {
         /// <returns>
         /// なし
         /// </returns>
-        void notifyError() {
-            return m_manager->notifyError();
+        void ExitGame() {
+            return m_manager->ExitGame();
         }
     };
 
@@ -175,7 +175,7 @@ namespace bnsGame::utl {
 
         enum class TransitionState { None, Active, ChangeIn, ChangeOut } m_transitionState = TransitionState::None;
 
-        bool m_error = false;
+        bool m_isEnd = false;
 
         bool UpdateSingle() {
             if (m_transitionState == TransitionState::ChangeOut) {
@@ -183,7 +183,7 @@ namespace bnsGame::utl {
 
                 m_current = m_factories[m_nextState]();
 
-                if (hasError()) {
+                if (IsEnd()) {
                     return false;
                 }
 
@@ -199,20 +199,20 @@ namespace bnsGame::utl {
             switch (m_transitionState) {
             case TransitionState::ChangeIn:
                 m_current->UpdateChangeIn();
-                return !hasError();
+                return !IsEnd();
             case TransitionState::Active:
                 m_current->Update();
-                return !hasError();
+                return !IsEnd();
             case TransitionState::ChangeOut:
                 m_current->UpdateChangeOut();
-                return !hasError();
+                return !IsEnd();
             default:
                 return false;
             }
         }
 
-        [[nodiscard]] bool hasError() const noexcept {
-            return m_error;
+        [[nodiscard]] bool IsEnd() const noexcept {
+            return m_isEnd;
         }
 
     public:
@@ -297,7 +297,7 @@ namespace bnsGame::utl {
 
             m_current = it->second();
 
-            if (hasError()) {
+            if (IsEnd()) {
                 return false;
             }
 
@@ -313,7 +313,7 @@ namespace bnsGame::utl {
         /// シーンの更新に成功した場合 true, それ以外の場合は false
         /// </returns>
         bool UpdateScene() {
-            if (hasError()) {
+            if (IsEnd()) {
                 return false;
             }
 
@@ -404,12 +404,13 @@ namespace bnsGame::utl {
             m_nextState = state;
 
             m_transitionState = TransitionState::ChangeOut;
+            m_current->UpdateChangeOut();
 
             return true;
         }
 
         /// <summary>
-        /// エラーの発生を通知します。
+        /// ゲームの終了を通知します。
         /// </summary>
         /// <remarks>
         /// この関数を呼ぶと、以降の SceneMaster::Update() / UpdateAndDraw() が false を返します。
@@ -417,8 +418,8 @@ namespace bnsGame::utl {
         /// <returns>
         /// なし
         /// </returns>
-        void notifyError() {
-            m_error = true;
+        void ExitGame() {
+            m_isEnd = true;
         }
     };
 }  // namespace bnsGame
