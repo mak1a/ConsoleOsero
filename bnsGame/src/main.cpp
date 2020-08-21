@@ -1,5 +1,5 @@
-#include "iMemoryAllocator.hpp"
-#include "MyAllocator.hpp"
+#include "Utility/Allocator/iMemoryAllocator.hpp"
+#include "Utility/Allocator/MyAllocator.hpp"
 #include "Common.hpp"
 #include "Title.hpp"
 #include "Game.hpp"

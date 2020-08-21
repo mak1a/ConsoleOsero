@@ -5,6 +5,9 @@
 namespace bnsGame {
     class Title : public MyScene::Scene {
     private:
+        void ClearDisplay() const {
+            system("cls");
+        }
 
     public:
         Title(const InitData& init_);

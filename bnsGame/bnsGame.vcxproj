@@ -18,6 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Common.hpp" />
+    <ClInclude Include="src\Game.hpp" />
+    <ClInclude Include="src\Title.hpp" />
+    <ClInclude Include="src\Utility\Allocator\iMemoryAllocator.hpp" />
+    <ClInclude Include="src\Utility\Allocator\MyAllocator.hpp" />
+    <ClInclude Include="src\Utility\Point.hpp" />
+    <ClInclude Include="src\Utility\SceneMaster.hpp" />
+    <ClInclude Include="src\Utility\StateMachine.hpp" />
+    <ClInclude Include="src\Utility\Timer.hpp" />
+    <ClInclude Include="src\Utility\Vector2.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Title.cpp" />
+    <ClCompile Include="src\Utility\Allocator\MyAllocator.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -89,6 +107,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\yssmh\Desktop\bnsGame\bnsGame\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,22 +159,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Common.hpp" />
-    <ClInclude Include="Game.hpp" />
-    <ClInclude Include="iMemoryAllocator.hpp" />
-    <ClInclude Include="MyAllocator.hpp" />
-    <ClInclude Include="SceneMaster.hpp" />
-    <ClInclude Include="StateMachine.hpp" />
-    <ClInclude Include="Timer.hpp" />
-    <ClInclude Include="Title.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyAllocator.cpp" />
-    <ClCompile Include="Title.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

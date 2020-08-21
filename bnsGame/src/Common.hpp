@@ -1,6 +1,6 @@
 #pragma once
-#include "SceneMaster.hpp"
-#include "MyAllocator.hpp"
+#include "Utility/SceneMaster.hpp"
+#include "Utility/Allocator/MyAllocator.hpp"
 
 namespace bnsGame {
     enum class Scene {

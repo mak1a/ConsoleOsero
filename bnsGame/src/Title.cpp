@@ -1,14 +1,20 @@
 #include "Title.hpp"
 #include <iostream>
+#include <conio.h>
 
 bnsGame::Title::Title(const InitData& init_)
-: IScene(init_) {}
+: IScene(init_) {
+    ClearDisplay();
+}
 
 void bnsGame::Title::Update() {
-    std::string s;
-    std::cin >> s;
+    char s = _getch();
 
-    if (s == "y") {
+    if (s == 'e') {
+        ExitGame();
+    }
+
+    if (s == 'y') {
         ChangeScene(bnsGame::Scene::Game);
     }
 }
