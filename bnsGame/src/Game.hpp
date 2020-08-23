@@ -1,273 +1,144 @@
 #pragma once
 
 #include "Common.hpp"
-#include "Utility/Allocator/MyAllocator.hpp"
-#include "Utility/Point.hpp"
+#include "Sikou.hpp"
 #include <vector>
 #include <array>
+#include <string>
+#include <iostream>
 
 namespace bnsGame {
+    /// <summary>
+    /// É}ÉXÇÃèÛë‘
+    /// </summary>
+    enum class StoneState {
+	    None,
+        White,
+        Black,
+        Wall
+	};
+
+    /// <summary>
+    /// êŒ
+    /// </summary>
+    class Stone : public utl::StateMachine<StoneState> {
+    private:
+        class None : public utl::State<StoneState> {
+        private:
+            Stone& m_stone;
+        public:
+            None(Stone& stone_)
+                : State<StoneState>(StoneState::None)
+                , m_stone(stone_) {}
+
+            void Draw() const override {
+                std::cout << "ÅE";
+            }
+        };
+
+        class Black : public utl::State<StoneState> {
+        private:
+            Stone& m_stone;
+        public:
+            Black(Stone& stone_)
+                : State<StoneState>(StoneState::Black)
+                , m_stone(stone_) {}
+
+            void Draw() const override {
+                std::cout << "Åõ";
+            }
+        };
+
+        class White : public utl::State<StoneState> {
+        private:
+            Stone& m_stone;
+        public:
+            White(Stone& stone_)
+                : State<StoneState>(StoneState::White)
+                , m_stone(stone_) {}
+
+            void Draw() const override {
+                std::cout << "Åú";
+            }
+        };
+
+        class Wall : public utl::State<StoneState> {
+        private:
+            Stone& m_stone;
+        public:
+            Wall(Stone& stone_)
+                : State<StoneState>(StoneState::Wall)
+                , m_stone(stone_) {}
+
+        };
+
+    public:
+        Stone(const StoneState& state_) {
+            InitializeStateMachine();
+            GoToState(state_);
+        }
+        Stone() : Stone(StoneState::Wall) {}
+
+        void InitializeStateMachine() override {
+            AddState(std::make_shared<None>(*this));
+            AddState(std::make_shared<Black>(*this));
+            AddState(std::make_shared<White>(*this));
+            AddState(std::make_shared<Wall>(*this));
+        }
+    };
+
     class Game : public MyScene::Scene {
     private:
-        enum class MinoType {
-            I,
-            O,
-            S,
-            Z,
-            J,
-            L,
-            T,
-            End
-        };
+        static constexpr uint32_t k_boardWidth = 10;
+        static constexpr uint32_t k_boardHeight = 10;
 
-        enum MinoAngle {
-            deg0,
-            deg90,
-            deg180,
-            deg270,
-            degEnd
-        };
+        std::array<std::array<Stone, k_boardWidth>, k_boardHeight> m_displayBuffer;
+        std::array<std::array<Stone, k_boardWidth>, k_boardHeight> m_boards;
 
-        static constexpr std::array<std::array<std::array<std::array<uint32_t, 4>, 4>, MinoAngle::degEnd>, static_cast<uint32_t>(MinoType::End)> k_minoShapes = {{
-            // I
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }},
-            // O
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }},
-            // S
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }},
-            // Z
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }},
-            // J
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }},
-            // L
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }},
-            // T
-            {{
-                // deg0
-                {{
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 1, 0, 0}
-                }},
-                // deg90
-                {{
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0}        
-                }},
-                // deg180
-                {{
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 1, 0}    
-                }},
-                // deg270
-                {{
-                    {0, 0, 0, 0},
-                    {1, 1, 1, 1},
-                    {0, 0, 0, 0},
-                    {0, 0, 0, 0}     
-                }}
-            }}
-        }};
+        utl::Point m_stonePutPos;
 
-        static constexpr uint32_t k_fieldHeight = 22;
-        static constexpr uint32_t k_fieldWidth = 12;
+        std::string m_inputString;
 
-        std::vector<uint32_t*> m_displayBuffer;
-        std::vector<uint32_t*> m_field;
+        Aspect m_aspect;
+        Sikou m_sikou;
 
-        utl::Point m_playerPos;
-
-        MinoType m_minoType;
-        MinoAngle m_minoAngle;
+        enum class Turn {
+            Player,
+            Enemy,
+            Result
+        } m_turn;
 
         void ClearDisplay() const {
             system("cls");
         }
+
+        void Input();
+
+        void PlayerTurn();
+
+        void EnemyTurn();
+
+        void ChangeTurn() {
+            m_turn = ((m_turn == Turn::Player) ? Turn::Enemy : Turn::Player);
+            if (m_turn == Turn::Player) {
+                if (m_aspect.MakeLegalPuts(Self) <= 0) {
+                    m_turn = Turn::Result;
+                }
+            }
+            else {
+                if (m_aspect.MakeLegalPuts(Enemy) <= 0) {
+                    m_turn = Turn::Result;
+                }
+            }
+        }
+
+        bool ChangeStones(const StoneState& stone_);
     public:
         Game(const InitData& init_);
 
         void Update() override;
 
-        void UpdateChangeOut() override;
+        //void UpdateChangeOut() override;
 
         void Draw() const override;
     };

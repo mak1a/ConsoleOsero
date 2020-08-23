@@ -19,8 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Aspect.hpp" />
     <ClInclude Include="src\Common.hpp" />
     <ClInclude Include="src\Game.hpp" />
+    <ClInclude Include="src\Sikou.hpp" />
     <ClInclude Include="src\Title.hpp" />
     <ClInclude Include="src\Utility\Allocator\iMemoryAllocator.hpp" />
     <ClInclude Include="src\Utility\Allocator\MyAllocator.hpp" />
@@ -31,8 +33,10 @@
     <ClInclude Include="src\Utility\Vector2.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Aspect.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Sikou.cpp" />
     <ClCompile Include="src\Title.cpp" />
     <ClCompile Include="src\Utility\Allocator\MyAllocator.cpp" />
   </ItemGroup>

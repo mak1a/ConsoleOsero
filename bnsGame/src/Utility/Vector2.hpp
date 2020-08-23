@@ -28,7 +28,9 @@ namespace bnsGame::utl {
 
 		Vector2() noexcept = default;
 
-		constexpr Vector2(const Vector2&) noexcept = default;
+		constexpr Vector2(const Vector2& v_) noexcept
+			: m_x(v_.x)
+			, m_y(v_.y) {}
 
 		constexpr Vector2(const value_t x_, const value_t y_) noexcept
 			: m_x(x_)
@@ -38,6 +40,8 @@ namespace bnsGame::utl {
 		constexpr Vector2(const Vector2<U>& v_)
 			: m_x(v_.x)
 			, m_y(v_.y) {}
+
+		virtual ~Vector2() noexcept = default;
 
 		[[nodiscard]] constexpr Vector2 operator+() const noexcept {
 			return *this;

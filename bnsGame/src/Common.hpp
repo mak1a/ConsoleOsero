@@ -1,8 +1,26 @@
 #pragma once
 #include "Utility/SceneMaster.hpp"
 #include "Utility/Allocator/MyAllocator.hpp"
+#include <random>
 
 namespace bnsGame {
+    namespace utl {
+        namespace Private {
+            inline std::random_device rd;
+            inline std::mt19937 mt(rd());
+        }  // namespace Private
+
+        [[nodiscard]] inline bool RandomBool(double p_ = 0.5) noexcept {
+            std::bernoulli_distribution getBool(p_);
+            return getBool(Private::mt);
+        }
+
+        [[nodiscard]] inline uint32_t RandomUint32(const uint32_t min_, const uint32_t max_) noexcept {
+            std::uniform_int_distribution<uint32_t> getNum(min_, max_);
+            return getNum(Private::mt);
+        }
+    }
+
     enum class Scene {
         Title,
         Game,

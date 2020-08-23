@@ -41,7 +41,7 @@ namespace bnsGame::utl {
 
         virtual ~StateMachine() = default;
 
-        std::optional<const T> GetCurrentStateName() const {
+        std::optional<const T> GetCurrentState() const {
             if (m_state == nullptr) {
                 return {};
             }
