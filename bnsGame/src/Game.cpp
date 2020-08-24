@@ -1,6 +1,8 @@
 #include "Game.hpp"
 #include <cstdio>
 #include <conio.h>
+#include <Windows.h>
+#include <thread>
 
 bnsGame::Game::Game(const InitData& init_)
     : IScene(init_)
@@ -8,7 +10,8 @@ bnsGame::Game::Game(const InitData& init_)
     , m_boards()
     , m_stonePutPos(5, 0)
     , m_turn(Turn::Player)
-    , m_aspect(Self) {
+    , m_aspect(((m_turn == Turn::Player) ? Self : Enemy))
+    , m_playerColor((m_turn == Turn::Player) ? StoneState::Black : StoneState::White) {
     ClearDisplay();
 
     for (uint32_t y{ 1 }; y <= 8; ++y) {
@@ -21,6 +24,11 @@ bnsGame::Game::Game(const InitData& init_)
     m_boards[5][5].GoToState(StoneState::White);
     m_boards[5][4].GoToState(StoneState::Black);
     m_boards[4][5].GoToState(StoneState::Black);
+
+    int32_t turn = (m_turn == Turn::Player) ? Self : Enemy;
+    if (m_aspect.MakeLegalPuts(turn) <= 0) {
+        m_turn = Turn::Result;
+    }
 
     Draw();
 }
@@ -251,7 +259,7 @@ void bnsGame::Game::PlayerTurn() {
     }
 
     m_aspect.Put(Self, m_stonePutPos);
-    if (ChangeStones(StoneState::Black)) {
+    if (ChangeStones(m_playerColor)) {
         ChangeTurn();
     }
 }
@@ -276,7 +284,8 @@ void bnsGame::Game::EnemyTurn() {
     m_stonePutPos.Set(m_sikou.Think(Enemy, m_aspect));
     m_aspect.Put(Enemy, m_stonePutPos);
 
-    if (ChangeStones(StoneState::White)) {
+    auto enemyColor = ((m_playerColor == StoneState::Black) ? StoneState::White : StoneState::Black);
+    if (ChangeStones(enemyColor)) {
         ChangeTurn();
     }
 }
@@ -287,9 +296,13 @@ void bnsGame::Game::Update() {
 	case bnsGame::Game::Turn::Player:
         PlayerTurn();
         break;
-    case bnsGame::Game::Turn::Enemy:
-        EnemyTurn();
+    case bnsGame::Game::Turn::Enemy: {
+        std::thread th(&bnsGame::Game::EnemyTurn, this);
+        Sleep(800);
+        //EnemyTurn();
+        th.join();
         break;
+        }
     case bnsGame::Game::Turn::Result:
         break;
     default:

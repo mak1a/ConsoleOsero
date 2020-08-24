@@ -205,6 +205,10 @@ uint32_t bnsGame::Aspect::MakeLegalPuts(const int32_t isSelfOrEnemy_) {
         for (int32_t gyo{1}; gyo <= 8; ++gyo) {
             const int32_t prevStoneColor = ((isSelfOrEnemy_ == Self) ? Enemy : Self);
             bool isPushed{false};
+
+            if (m_boards[retu * 10 + gyo] != StoneType::None) {
+                continue;
+            }
             // 上方向
             if (m_boards[(retu - 1) * 10 + gyo] == prevStoneColor) {
                 int32_t y{retu - 2};

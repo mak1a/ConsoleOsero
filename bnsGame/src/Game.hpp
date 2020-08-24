@@ -99,14 +99,16 @@ namespace bnsGame {
 
         std::string m_inputString;
 
-        Aspect m_aspect;
-        Sikou m_sikou;
-
         enum class Turn {
             Player,
             Enemy,
             Result
         } m_turn;
+        
+        Aspect m_aspect;
+        Sikou m_sikou;
+        
+        StoneState m_playerColor;
 
         void ClearDisplay() const {
             system("cls");
