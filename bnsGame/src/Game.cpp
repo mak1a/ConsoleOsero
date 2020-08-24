@@ -264,6 +264,15 @@ void bnsGame::Game::PlayerTurn() {
     }
 }
 
+void bnsGame::Game::PlayerAITurn() {
+    m_stonePutPos.Set(m_sikou.Think(Self, m_aspect));
+    m_aspect.Put(Self, m_stonePutPos);
+
+    if (ChangeStones(m_playerColor)) {
+        ChangeTurn();
+    }
+}
+
 void bnsGame::Game::EnemyTurn() {
     /*Input();
 
@@ -293,29 +302,25 @@ void bnsGame::Game::EnemyTurn() {
 void bnsGame::Game::Update() {
     switch (m_turn)
 	{
-	case bnsGame::Game::Turn::Player:
+	case bnsGame::Turn::Player:
         PlayerTurn();
         break;
-    case bnsGame::Game::Turn::Enemy: {
+    case bnsGame::Turn::Enemy: {
         std::thread th(&bnsGame::Game::EnemyTurn, this);
         Sleep(800);
         //EnemyTurn();
         th.join();
         break;
         }
-    case bnsGame::Game::Turn::Result:
+    case bnsGame::Turn::Result:
         break;
     default:
         break;
 	}
 }
 
-//void bnsGame::Game::UpdateChangeOut() {
-//    for (uint32_t y{}; y < k_boardHeight; ++y) {
-//        getData().m_alloc->Free(m_displayBuffer[y]);
-//        getData().m_alloc->Free(m_boards[y]);
-//    }
-//}
+void bnsGame::Game::UpdateChangeOut() {
+}
 
 void bnsGame::Game::Draw() const {
     ClearDisplay();

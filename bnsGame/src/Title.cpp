@@ -4,7 +4,7 @@
 bnsGame::Title::Title(const InitData& init_)
 : IScene(init_)
 , m_displayBuffer(k_boardHeight){
-    ClearDisplay();
+    //ClearDisplay();
     for (uint32_t y{}; y < k_boardHeight; ++y) {
         m_displayBuffer[y] = reinterpret_cast<int32_t*>(getData().m_alloc->Alloc(sizeof(int32_t) * k_boardWidth));
     }
@@ -25,6 +25,9 @@ void bnsGame::Title::Update() {
 
     if (s == 'y') {
         ChangeScene(bnsGame::Scene::Game);
+    }
+    if (s == 's') {
+        ChangeScene(bnsGame::Scene::Study);
     }
 }
 

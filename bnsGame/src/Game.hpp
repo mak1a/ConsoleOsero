@@ -2,6 +2,7 @@
 
 #include "Common.hpp"
 #include "Sikou.hpp"
+#include "Utility/StateMachine.hpp"
 #include <vector>
 #include <array>
 #include <string>
@@ -99,11 +100,7 @@ namespace bnsGame {
 
         std::string m_inputString;
 
-        enum class Turn {
-            Player,
-            Enemy,
-            Result
-        } m_turn;
+        Turn m_turn;
         
         Aspect m_aspect;
         Sikou m_sikou;
@@ -117,6 +114,7 @@ namespace bnsGame {
         void Input();
 
         void PlayerTurn();
+        void PlayerAITurn();
 
         void EnemyTurn();
 
@@ -140,7 +138,7 @@ namespace bnsGame {
 
         void Update() override;
 
-        //void UpdateChangeOut() override;
+        void UpdateChangeOut() override;
 
         void Draw() const override;
     };

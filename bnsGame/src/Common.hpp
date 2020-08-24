@@ -24,6 +24,19 @@ namespace bnsGame {
     enum class Scene {
         Title,
         Game,
+        Study
+    };
+
+    enum class Turn { 
+        Player, 
+        Enemy, 
+        Result 
+    };
+
+    enum class Winner {
+        Player,
+        Enemy,
+        Draw
     };
 
     class GameData {

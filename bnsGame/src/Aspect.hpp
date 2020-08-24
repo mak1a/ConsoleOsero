@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "Utility/StateMachine.hpp"
 #include "Utility/Point.hpp"
+#include "Common.hpp"
 #include <iostream>
 #include <array>
 
@@ -50,5 +50,50 @@ namespace bnsGame {
 
         uint32_t MakeLegalPuts(const int32_t isSelfOrEnemy_);
 
+        [[nodiscard]] Winner GetWinner() const noexcept {
+            int32_t count{};
+            for (uint32_t y{1}; y <= 8; ++y) {
+                for (uint32_t x{1}; x <= 8; ++x) {
+                    count += m_boards[y * 10 + x];
+                }
+            }
+
+            if (count > 0) {
+                std::cout << "プレイヤーWin!" << std::endl;
+                Print();
+                return Winner::Player;
+            }
+
+            if (count < 0) {
+                std::cout << "プレイヤーLose..." << std::endl;
+                Print();
+                return Winner::Enemy;
+            }
+
+            std::cout << "引き分け" << std::endl;
+            Print();
+            return Winner::Draw;
+        }
+
+        void Print() const noexcept {
+            uint32_t playerStoneCount{};
+            uint32_t enemyStoneCount{};
+
+            for (uint32_t y{1}; y <= 8; ++y) {
+                for (uint32_t x{1}; x <= 8; ++x) {
+                    if (m_boards[y * 10 + x] == Self) {
+                        ++playerStoneCount;
+                        continue;
+                    }
+
+                    if (m_boards[y * 10 + x] == Enemy) {
+                        ++enemyStoneCount;
+                        continue;
+                    }
+                }
+            }
+
+            std::cout << "プレイヤー : " << playerStoneCount << ", 敵 : " << enemyStoneCount << std::endl;
+        }
     };
 }

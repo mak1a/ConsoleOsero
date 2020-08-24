@@ -23,6 +23,7 @@
     <ClInclude Include="src\Common.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\Sikou.hpp" />
+    <ClInclude Include="src\Study.hpp" />
     <ClInclude Include="src\Title.hpp" />
     <ClInclude Include="src\Utility\Allocator\iMemoryAllocator.hpp" />
     <ClInclude Include="src\Utility\Allocator\MyAllocator.hpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Sikou.cpp" />
+    <ClCompile Include="src\Study.cpp" />
     <ClCompile Include="src\Title.cpp" />
     <ClCompile Include="src\Utility\Allocator\MyAllocator.cpp" />
   </ItemGroup>
