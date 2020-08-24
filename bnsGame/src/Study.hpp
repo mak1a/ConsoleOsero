@@ -9,8 +9,8 @@ namespace bnsGame {
 
         Aspect m_aspect;
         
-        std::vector<Sikou> m_sikou;
-        std::vector<uint32_t> m_winNums;
+        std::vector<Sikou> m_sikous;
+        std::vector<std::pair<uint32_t, uint32_t>> m_winNums;
 
         uint32_t m_playerIndex;
         uint32_t m_enemyIndex;
@@ -23,6 +23,8 @@ namespace bnsGame {
         }
 
         void Init(const Turn& turn_);
+
+        void Mating();
 
         void PlayerTurn();
 

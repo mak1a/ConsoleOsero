@@ -16,6 +16,10 @@ bnsGame::Sikou::Sikou(const bool isSelected) {
     m_evaluationValues[8][8] = 8;
 }
 
+bnsGame::Sikou::Sikou(const std::array<std::array<int32_t, 10>, 10>& values_) : m_evaluationValues(values_) {
+    Mutation();
+}
+
 bnsGame::utl::Point bnsGame::Sikou::Think(const int32_t isSelfOrEnemy, Aspect aspect_) noexcept {
     std::vector<utl::Point> valids{aspect_.GetStoneValids()};
     std::shuffle(valids.begin(), valids.end(), utl::Private::mt);
