@@ -23,6 +23,8 @@ namespace bnsGame {
             m_value = value_;
         }
 
+        void SetCurrentValue(const std::array<std::array<int32_t, 10>, 10>& values_);
+
     public:
         Aspect() = default;
         Aspect(const int32_t firstTurn_) noexcept;
@@ -46,7 +48,7 @@ namespace bnsGame {
         /// </summary>
         /// <param name="isSelfOrEnemy_">手番</param>
         /// <param name="coordinate_">座標</param>
-        void Put(const int32_t isSelfOrEnemy_, const utl::Point& coordinate_);
+        void Put(const int32_t isSelfOrEnemy_, const utl::Point& coordinate_, const std::array<std::array<int32_t, 10>, 10>& values_);
 
         uint32_t MakeLegalPuts(const int32_t isSelfOrEnemy_);
 

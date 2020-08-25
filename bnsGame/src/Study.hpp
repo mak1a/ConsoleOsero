@@ -5,12 +5,15 @@
 namespace bnsGame {
     class Study : public MyScene::Scene {
     private:
+        int32_t m_parentNum;
+        int32_t m_geneNum;
+
         Turn m_turn;
 
-        Aspect m_aspect;
-        
         std::vector<Sikou> m_sikous;
         std::vector<std::pair<uint32_t, uint32_t>> m_winNums;
+
+        Aspect m_aspect;
 
         uint32_t m_playerIndex;
         uint32_t m_enemyIndex;
@@ -38,14 +41,20 @@ namespace bnsGame {
                 if (m_aspect.MakeLegalPuts(Self) <= 0) {
                     if (m_aspect.MakeLegalPuts(Enemy) <= 0) {
                         m_turn = Turn::Result;
+                        return;
                     }
+
+                    m_turn = Turn::Enemy;
                 }
             }
             else {
                 if (m_aspect.MakeLegalPuts(Enemy) <= 0) {
                     if (m_aspect.MakeLegalPuts(Self) <= 0) {
                         m_turn = Turn::Result;
+                        return;
                     }
+
+                    m_turn = Turn::Player;
                 }
             }
         }

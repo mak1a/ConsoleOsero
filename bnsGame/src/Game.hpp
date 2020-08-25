@@ -102,8 +102,12 @@ namespace bnsGame {
 
         Turn m_turn;
         
-        Aspect m_aspect;
         Sikou m_sikou;
+        
+        // 学習がちゃんとできてるかの確認用
+        Sikou m_testSikou;
+
+        Aspect m_aspect;
         
         StoneState m_playerColor;
 
@@ -118,16 +122,28 @@ namespace bnsGame {
 
         void EnemyTurn();
 
+        void Result();
+
         void ChangeTurn() {
             m_turn = ((m_turn == Turn::Player) ? Turn::Enemy : Turn::Player);
             if (m_turn == Turn::Player) {
                 if (m_aspect.MakeLegalPuts(Self) <= 0) {
-                    m_turn = Turn::Result;
+                    if (m_aspect.MakeLegalPuts(Enemy) <= 0) {
+                        m_turn = Turn::Result;
+                        return;
+                    }
+
+                    m_turn = Turn::Enemy;
                 }
             }
             else {
                 if (m_aspect.MakeLegalPuts(Enemy) <= 0) {
-                    m_turn = Turn::Result;
+                    if (m_aspect.MakeLegalPuts(Self) <= 0) {
+                        m_turn = Turn::Result;
+                        return;
+                    }
+
+                    m_turn = Turn::Player;
                 }
             }
         }

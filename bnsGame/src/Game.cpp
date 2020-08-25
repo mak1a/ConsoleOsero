@@ -11,7 +11,9 @@ bnsGame::Game::Game(const InitData& init_)
     , m_stonePutPos(5, 0)
     , m_turn(Turn::Player)
     , m_aspect(((m_turn == Turn::Player) ? Self : Enemy))
-    , m_playerColor((m_turn == Turn::Player) ? StoneState::Black : StoneState::White) {
+    , m_playerColor((m_turn == Turn::Player) ? StoneState::Black : StoneState::White)
+    , m_sikou(getData().GetValues())
+    , m_testSikou(true) {
     ClearDisplay();
 
     for (uint32_t y{ 1 }; y <= 8; ++y) {
@@ -258,15 +260,15 @@ void bnsGame::Game::PlayerTurn() {
         return;
     }
 
-    m_aspect.Put(Self, m_stonePutPos);
+    m_aspect.Put(Self, m_stonePutPos, getData().GetValues());
     if (ChangeStones(m_playerColor)) {
         ChangeTurn();
     }
 }
 
 void bnsGame::Game::PlayerAITurn() {
-    m_stonePutPos.Set(m_sikou.Think(Self, m_aspect));
-    m_aspect.Put(Self, m_stonePutPos);
+    m_stonePutPos.Set(m_testSikou.Think(Self, m_aspect));
+    m_aspect.Put(Self, m_stonePutPos, m_testSikou.GetValues());
 
     if (ChangeStones(m_playerColor)) {
         ChangeTurn();
@@ -291,7 +293,7 @@ void bnsGame::Game::EnemyTurn() {
     }*/
 
     m_stonePutPos.Set(m_sikou.Think(Enemy, m_aspect));
-    m_aspect.Put(Enemy, m_stonePutPos);
+    m_aspect.Put(Enemy, m_stonePutPos, getData().GetValues());
 
     auto enemyColor = ((m_playerColor == StoneState::Black) ? StoneState::White : StoneState::Black);
     if (ChangeStones(enemyColor)) {
@@ -299,20 +301,38 @@ void bnsGame::Game::EnemyTurn() {
     }
 }
 
+void bnsGame::Game::Result() {
+    auto result = m_aspect.GetWinner();
+    if (result == Winner::Player) {
+        std::cout << "Player Win!" << std::endl;
+    }
+    else if (result == Winner::Enemy) {
+        std::cout << "Player Lose..." << std::endl;
+    }
+    else {
+        std::cout << "Draw" << std::endl;
+    }
+
+    ChangeScene(Scene::Title);
+}
+
 void bnsGame::Game::Update() {
     switch (m_turn)
 	{
-	case bnsGame::Turn::Player:
-        PlayerTurn();
-        break;
-    case bnsGame::Turn::Enemy: {
-        std::thread th(&bnsGame::Game::EnemyTurn, this);
-        Sleep(800);
-        //EnemyTurn();
+    case bnsGame::Turn::Player: {
+        std::thread th(&bnsGame::Game::PlayerAITurn, this);
+        Sleep(100);
         th.join();
         break;
-        }
+    }
+    case bnsGame::Turn::Enemy: {
+        std::thread th(&bnsGame::Game::EnemyTurn, this);
+        Sleep(100);
+        th.join();
+        break;
+    }
     case bnsGame::Turn::Result:
+        Result();
         break;
     default:
         break;

@@ -3,7 +3,10 @@
 #include <Windows.h>
 #include <string>
 
-bnsGame::Study::Study(const InitData& init_) : IScene(init_)
+bnsGame::Study::Study(const InitData& init_)
+: IScene(init_)
+, m_parentNum(0)
+, m_geneNum(1)
 , m_turn(Turn::Player)
 , m_aspect(((m_turn == Turn::Player) ? Self : Enemy))
 , m_playerIndex(0)
@@ -11,12 +14,23 @@ bnsGame::Study::Study(const InitData& init_) : IScene(init_)
 , m_state(StudyState::Studying) {
     ClearDisplay();
 
-    for (uint32_t i{}; i < 6; ++i) {
+    std::cout << "世代数を入力してください。" << std::endl;
+    std::cout << "奇数を入力した場合、+1されます。また、入力の最小値4未満を入力した場合、世代数は4です。" << std::endl;
+    std::cout << ">> ";
+    std::cin >> m_parentNum;
+    if (m_parentNum % 2 != 0) {
+        ++m_parentNum;
+    }
+    if (m_parentNum < 4) {
+        m_parentNum = 4;
+    }
+
+    for (uint32_t i{}; i < static_cast<uint32_t>(m_parentNum); ++i) {
         m_winNums.emplace_back(static_cast<uint32_t>(0), i);
     }
 
     m_sikous.emplace_back(true);
-    for (uint32_t i{}; i < 5; ++i) {
+    for (uint32_t i{}; i < static_cast<uint32_t>(m_parentNum) - 1; ++i) {
         m_sikous.emplace_back();
     }
 
@@ -45,7 +59,9 @@ void bnsGame::Study::Mating() {
 
     // 優秀な二人の遺伝子はクローンする
     {
-        std::sort(m_winNums.rbegin(), m_winNums.rend());
+        std::sort(m_winNums.begin(), m_winNums.end(), [](auto const& a, auto const& b) {
+            return a.first > b.first;
+        });
         children.emplace_back(m_sikous[m_winNums[0].second]);
         children.emplace_back(m_sikous[m_winNums[1].second]);
     }
@@ -80,15 +96,30 @@ void bnsGame::Study::Mating() {
             }
         }
 
+        // 角の評価値は勝利数の多い方にする
+        child_1[1][1] = m_sikous[m_winNums[0].second].GetValue(1, 1);
+        child_2[1][1] = m_sikous[m_winNums[0].second].GetValue(1, 1);
+
+        child_1[1][8] = m_sikous[m_winNums[0].second].GetValue(8, 1);
+        child_2[1][8] = m_sikous[m_winNums[0].second].GetValue(8, 1);
+
+        child_1[8][1] = m_sikous[m_winNums[0].second].GetValue(1, 8);
+        child_2[8][1] = m_sikous[m_winNums[0].second].GetValue(1, 8);
+
+        child_1[8][8] = m_sikous[m_winNums[0].second].GetValue(8, 8);
+        child_2[8][8] = m_sikous[m_winNums[0].second].GetValue(8, 8);
+
         children.emplace_back(child_1);
         children.emplace_back(child_2);
     }
 
     // ランダムに選んだ二人を交配させる
-    {
+    for (uint32_t i{}; i < (static_cast<uint32_t>(m_parentNum) - 4) / 2; ++i) {
         std::vector<Sikou> randomParents;
-        randomParents.emplace_back(m_sikous[utl::RandomUint32(0, 5)]);
-        randomParents.emplace_back(m_sikous[utl::RandomUint32(0, 5)]);
+        uint32_t parentIndex_1{utl::RandomUint32(0, m_parentNum - 1)};
+        uint32_t parentIndex_2{utl::RandomUint32(0, m_parentNum - 1)};
+        randomParents.emplace_back(m_sikous[parentIndex_1]);
+        randomParents.emplace_back(m_sikous[parentIndex_2]);
 
         std::array<std::array<int32_t, 10>, 10> child_3, child_4;
 
@@ -118,6 +149,34 @@ void bnsGame::Study::Mating() {
             }
         }
 
+        const auto& excellentParent = ((parentIndex_1 <= parentIndex_2) ? randomParents[0] : randomParents[1]);
+
+        //// 角の評価値は勝利数の多い方にする
+        //child_3[1][1] = excellentParent.GetValue(1, 1);
+        //child_4[1][1] = excellentParent.GetValue(1, 1);
+
+        //child_3[1][8] = excellentParent.GetValue(8, 1);
+        //child_4[1][8] = excellentParent.GetValue(8, 1);
+
+        //child_3[8][1] = excellentParent.GetValue(1, 8);
+        //child_4[8][1] = excellentParent.GetValue(1, 8);
+
+        //child_3[8][8] = excellentParent.GetValue(8, 8);
+        //child_4[8][8] = excellentParent.GetValue(8, 8);
+
+        // 角の評価値は最大値にする
+        child_3[1][1] = 16;
+        child_4[1][1] = 16;
+
+        child_3[1][8] = 16;
+        child_4[1][8] = 16;
+
+        child_3[8][1] = 16;
+        child_4[8][1] = 16;
+
+        child_3[8][8] = 16;
+        child_4[8][8] = 16;
+
         children.emplace_back(child_3);
         children.emplace_back(child_4);
     }
@@ -130,19 +189,19 @@ void bnsGame::Study::Mating() {
 }
 
 void bnsGame::Study::PlayerTurn() {
-    m_aspect.Put(Self, m_sikous[m_playerIndex].Think(Self, m_aspect));
+    m_aspect.Put(Self, m_sikous[m_playerIndex].Think(Self, m_aspect), m_sikous[m_playerIndex].GetValues());
 
     ChangeTurn();
 }
 
 void bnsGame::Study::EnemyTurn() {
-    m_aspect.Put(Enemy, m_sikous[m_enemyIndex].Think(Enemy, m_aspect));
+    m_aspect.Put(Enemy, m_sikous[m_enemyIndex].Think(Enemy, m_aspect), m_sikous[m_enemyIndex].GetValues());
 
     ChangeTurn();
 }
 
 void bnsGame::Study::Result() {
-    std::cout << "おっけーーーーーーーーいうぇ～～～い！！！" << std::endl;
+    std::cout << "対戦終了." << std::endl;
     const auto winner = m_aspect.GetWinner();
     if (winner == Winner::Player) {
         ++m_winNums[m_playerIndex].first;
@@ -151,7 +210,7 @@ void bnsGame::Study::Result() {
         ++m_winNums[m_enemyIndex].first;
     }
 
-    if (m_enemyIndex == 5) {
+    if (m_enemyIndex == (m_parentNum - 1)) {
         m_enemyIndex = 0;
         ++m_playerIndex;
         Init(Turn::Player);
@@ -160,25 +219,37 @@ void bnsGame::Study::Result() {
 
     ++m_enemyIndex;
     if (m_playerIndex == m_enemyIndex) {
-        if (m_enemyIndex == 5) {
+        if (m_enemyIndex == (m_parentNum - 1)) {
             m_state = StudyState::Mating;
             m_enemyIndex = 0;
             m_playerIndex = 0;
 
             std::cout << "各インデックスの勝利数は、" << std::endl;
-            for (const auto winNum : m_winNums) {
+            for (const auto& winNum : m_winNums) {
                 std::cout << winNum.first << " ";
             }
             std::cout << "です。" << std::endl;
-            std::string s;
-            std::cin >> s;
+            ++m_geneNum;
 
-            if (s == "e") {
-                for (const auto& sikou : m_sikous) {
-                    sikou.Print();
-                    std::cout << std::endl;
+            if (m_geneNum <= 10) {
+                Mating();
+                return;
+            }
+
+            uint32_t exitCondition = static_cast<uint32_t>((static_cast<double>(m_parentNum) - 1) * 1.8 - 1);
+            std::cout << exitCondition << std::endl;
+            for (const auto& winNum : m_winNums) {
+                if (winNum.first < exitCondition) {
+                    continue;
                 }
-                ExitGame();
+
+                // 学習した評価値を保存
+                getData().SetValues(m_sikous[winNum.second].GetValues());
+
+                m_sikous[winNum.second].Print();
+                std::cout << std::endl;
+                
+                ChangeScene(Scene::Title);
                 return;
             }
 

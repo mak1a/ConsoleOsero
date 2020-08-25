@@ -2,6 +2,7 @@
 #include "Utility/SceneMaster.hpp"
 #include "Utility/Allocator/MyAllocator.hpp"
 #include <random>
+#include <array>
 
 namespace bnsGame {
     namespace utl {
@@ -17,6 +18,11 @@ namespace bnsGame {
 
         [[nodiscard]] inline uint32_t RandomUint32(const uint32_t min_, const uint32_t max_) noexcept {
             std::uniform_int_distribution<uint32_t> getNum(min_, max_);
+            return getNum(Private::mt);
+        }
+
+        [[nodiscard]] inline uint32_t RandomInt32(const int32_t min_, const int32_t max_) noexcept {
+            std::uniform_int_distribution<int32_t> getNum(min_, max_);
             return getNum(Private::mt);
         }
     }
@@ -40,10 +46,31 @@ namespace bnsGame {
     };
 
     class GameData {
+    private:
+        std::array<std::array<int32_t, 10>, 10> m_evaluationValues;
     public:
         std::unique_ptr<allocator::iMemoryAllocator> m_alloc;
 
-        GameData(void* ptr_, const size_t size_) : m_alloc(std::make_unique<allocator::MyAllocator>(ptr_, size_)) {}
+        GameData(void* ptr_, const size_t size_) : m_alloc(std::make_unique<allocator::MyAllocator>(ptr_, size_)) {
+            for (int32_t y{}; y < 10; ++y) {
+                for (int32_t x{}; x < 10; ++x) {
+                    m_evaluationValues[y][x] = 0;
+                }
+            }
+
+            m_evaluationValues[1][1] = 16;
+            m_evaluationValues[1][8] = 16;
+            m_evaluationValues[8][1] = 16;
+            m_evaluationValues[8][8] = 16;
+        }
+
+        void SetValues(const std::array<std::array<int32_t, 10>, 10>& values_) {
+            m_evaluationValues = values_;
+        }
+
+        [[nodiscard]] std::array<std::array<int32_t, 10>, 10> GetValues() const noexcept {
+            return m_evaluationValues;
+        }
     };
 
     using MyScene = bnsGame::utl::SceneMaster<Scene, GameData>;
