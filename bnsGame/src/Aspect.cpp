@@ -1,7 +1,7 @@
 ﻿#include "Aspect.hpp"
 
 
-bnsGame::Aspect::Aspect(const int32_t firstTurn_) noexcept : m_value(0) {
+bnsGame::Aspect::Aspect(const int32_t firstTurn_) noexcept : m_value(0), m_tesu(0), m_finalValue(0) {
     std::fill(m_boards.begin(), m_boards.end(), Wall);
     for (uint32_t y{10}; y <= 80; y += 10) {
         for (uint32_t x{1}; x <= 8; ++x) {
@@ -18,6 +18,7 @@ bnsGame::Aspect::Aspect(const int32_t firstTurn_) noexcept : m_value(0) {
 
 void bnsGame::Aspect::SetCurrentValue(const std::array<std::array<int32_t, 10>, 10>& values_) {
     value = 0;
+    m_finalValue = 0;
 
     for (uint32_t y{1}; y <= 8; ++y) {
         for (uint32_t x{1}; x <= 8; ++x) {
@@ -26,12 +27,13 @@ void bnsGame::Aspect::SetCurrentValue(const std::array<std::array<int32_t, 10>, 
             }
 
             value += values_[y][x] * m_boards[y * 10 + x];
+            m_finalValue += m_boards[y * 10 + x];
         }
     }
 }
 
 void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordinate_, const std::array<std::array<int32_t, 10>, 10>& values_) {
-    SetCurrentValue(values_);
+    ++m_tesu;
 
     const int32_t prevStoneColor = ((isSelfOrEnemy_ == Self) ? Enemy : Self);
     // 上方向
@@ -50,10 +52,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (++y; y < coordinate_.y; ++y) {
                 m_boards[y * 10 + coordinate_.x] = isSelfOrEnemy_;
-                value += values_[y][coordinate_.x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -74,10 +74,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (--y; y > coordinate_.y; --y) {
                 m_boards[y * 10 + coordinate_.x] = isSelfOrEnemy_;
-                value += values_[y][coordinate_.x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -98,10 +96,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (--x; x > coordinate_.x; --x) {
                 m_boards[coordinate_.y * 10 + x] = isSelfOrEnemy_;
-                value += values_[coordinate_.y][x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -122,10 +118,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (++x; x < coordinate_.x; ++x) {
                 m_boards[coordinate_.y * 10 + x] = isSelfOrEnemy_;
-                value += values_[coordinate_.y][x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -147,10 +141,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (++y, --x; y < coordinate_.y; ++y, --x) {
                 m_boards[y * 10 + x] = isSelfOrEnemy_;
-                value += values_[y][x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -172,10 +164,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (--y, --x; y > coordinate_.y; --y, --x) {
                 m_boards[y * 10 + x] = isSelfOrEnemy_;
-                value += values_[y][x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -197,10 +187,8 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (++y, ++x; y < coordinate_.y; ++y, ++x) {
                 m_boards[y * 10 + x] = isSelfOrEnemy_;
-                value += values_[y][x] * 2 * isSelfOrEnemy_;
             }
         }
     }
@@ -222,13 +210,13 @@ void bnsGame::Aspect::Put(const int32_t isSelfOrEnemy_, const utl::Point& coordi
 
             // 実際に石を置く
             m_boards[coordinate_.y * 10 + coordinate_.x] = isSelfOrEnemy_;
-            value += values_[coordinate_.y][coordinate_.x] * isSelfOrEnemy_;
             for (--y, ++x; y > coordinate_.y; --y, ++x) {
                 m_boards[y * 10 + x] = isSelfOrEnemy_;
-                value += values_[y][x] * 2 * isSelfOrEnemy_;
             }
         }
     }
+
+    SetCurrentValue(values_);
 }
 
 uint32_t bnsGame::Aspect::MakeLegalPuts(const int32_t isSelfOrEnemy_) {

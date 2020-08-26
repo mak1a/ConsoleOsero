@@ -6,13 +6,19 @@ namespace bnsGame {
     class Sikou {
         std::array<std::array<int32_t, 10>, 10> m_evaluationValues;
         
-        std::pair<int32_t, utl::Point> m_bestPoint;
+        std::vector<utl::Point> m_bestPoint;
+
+        int32_t m_depthMax;
+
+        bool m_isExperiment;
 
         [[nodiscard]] int32_t MiniMax(const int32_t isSelfOrEnemy_, Aspect& aspect_, const int32_t depth_);
+    
+        [[nodiscard]] int32_t ReadThrough(const int32_t isSelfOrEnemy_, Aspect& aspect_, const int32_t depth_);
     public:
-        Sikou();
-        Sikou(const bool isSelected);
-        Sikou(const std::array<std::array<int32_t, 10>, 10>& values_);
+        explicit Sikou();
+        explicit Sikou(const bool isSelected);
+        explicit Sikou(const std::array<std::array<int32_t, 10>, 10>& values_, const bool isExperiment_ = true);
 
         void Mutation() {
             for (uint32_t y{1}; y <= 8; ++y) {

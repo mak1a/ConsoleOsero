@@ -18,6 +18,10 @@ namespace bnsGame {
 
         std::vector<utl::Point> m_stoneValids;
 
+        int32_t m_tesu;
+
+        int32_t m_finalValue;
+
         int32_t m_value;
         void SetValue(const int32_t value_) {
             m_value = value_;
@@ -96,6 +100,14 @@ namespace bnsGame {
             }
 
             std::cout << "プレイヤー : " << playerStoneCount << ", 敵 : " << enemyStoneCount << std::endl;
+        }
+
+        [[nodiscard]] int32_t GetTesu() const noexcept {
+            return m_tesu;
+        }
+
+        [[nodiscard]] int32_t GetFinalValue() const noexcept {
+            return m_finalValue;
         }
     };
 }

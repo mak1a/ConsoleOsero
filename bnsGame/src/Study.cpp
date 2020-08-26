@@ -165,17 +165,17 @@ void bnsGame::Study::Mating() {
         //child_4[8][8] = excellentParent.GetValue(8, 8);
 
         // 角の評価値は最大値にする
-        child_3[1][1] = 16;
-        child_4[1][1] = 16;
+        child_3[1][1] = 128;
+        child_4[1][1] = 128;
 
-        child_3[1][8] = 16;
-        child_4[1][8] = 16;
+        child_3[1][8] = 128;
+        child_4[1][8] = 128;
 
-        child_3[8][1] = 16;
-        child_4[8][1] = 16;
+        child_3[8][1] = 128;
+        child_4[8][1] = 128;
 
-        child_3[8][8] = 16;
-        child_4[8][8] = 16;
+        child_3[8][8] = 128;
+        child_4[8][8] = 128;
 
         children.emplace_back(child_3);
         children.emplace_back(child_4);

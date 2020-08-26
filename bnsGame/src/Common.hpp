@@ -58,10 +58,10 @@ namespace bnsGame {
                 }
             }
 
-            m_evaluationValues[1][1] = 16;
-            m_evaluationValues[1][8] = 16;
-            m_evaluationValues[8][1] = 16;
-            m_evaluationValues[8][8] = 16;
+            m_evaluationValues[1][1] = 128;
+            m_evaluationValues[1][8] = 128;
+            m_evaluationValues[8][1] = 128;
+            m_evaluationValues[8][8] = 128;
         }
 
         void SetValues(const std::array<std::array<int32_t, 10>, 10>& values_) {

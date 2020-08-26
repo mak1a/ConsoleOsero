@@ -12,7 +12,7 @@ bnsGame::Game::Game(const InitData& init_)
     , m_turn(Turn::Player)
     , m_aspect(((m_turn == Turn::Player) ? Self : Enemy))
     , m_playerColor((m_turn == Turn::Player) ? StoneState::Black : StoneState::White)
-    , m_sikou(getData().GetValues())
+    , m_sikou(getData().GetValues(), false)
     , m_testSikou(true) {
     ClearDisplay();
 
@@ -276,22 +276,6 @@ void bnsGame::Game::PlayerAITurn() {
 }
 
 void bnsGame::Game::EnemyTurn() {
-    /*Input();
-
-    if (m_inputString.size() != 2) {
-        return;
-    }
-
-    m_stonePutPos.Set(m_inputString[0] - '0', m_inputString[1] - '0');
-
-    if ((m_stonePutPos.x < 1 || m_stonePutPos.x > 8) || (m_stonePutPos.y < 1 || m_stonePutPos.y > 8)) {
-        return;
-    }
-
-    if (ChangeStones(StoneState::White)) {
-        ChangeTurn();
-    }*/
-
     m_stonePutPos.Set(m_sikou.Think(Enemy, m_aspect));
     m_aspect.Put(Enemy, m_stonePutPos, getData().GetValues());
 
@@ -320,14 +304,15 @@ void bnsGame::Game::Update() {
     switch (m_turn)
 	{
     case bnsGame::Turn::Player: {
-        std::thread th(&bnsGame::Game::PlayerAITurn, this);
+        /*std::thread th(&bnsGame::Game::PlayerAITurn, this);
         Sleep(100);
-        th.join();
+        th.join();*/
+        PlayerTurn();
         break;
     }
     case bnsGame::Turn::Enemy: {
         std::thread th(&bnsGame::Game::EnemyTurn, this);
-        Sleep(100);
+        Sleep(800);
         th.join();
         break;
     }
