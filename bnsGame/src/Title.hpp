@@ -5,14 +5,22 @@
 namespace bnsGame {
     class Title : public MyScene::Scene {
     private:
-        static constexpr uint32_t k_boardWidth = 8;
-        static constexpr uint32_t k_boardHeight = 8;
+        static constexpr uint32_t k_boardWidth = 19;
+        static constexpr uint32_t k_boardHeight = 9;
 
         std::vector<int32_t*> m_displayBuffer;
 
         void ClearDisplay() const {
             system("cls");
         }
+
+        enum class Color {
+            Green,  // óŒ
+            White,  // îí
+            Black   // çï
+        };
+
+        void DrawColorRect(const Color color_, std::string_view str_) const;
     public:
         Title(const InitData& init_);
 

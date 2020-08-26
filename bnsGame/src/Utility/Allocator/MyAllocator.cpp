@@ -9,7 +9,6 @@ allocator::MyAllocator::MyAllocator(void* ptr_, const size_t size_)
 }
 
 allocator::MyAllocator::~MyAllocator() {
-	std::cout << "‚â‚Á‚½‚©IH" << std::endl;
 }
 
 void* allocator::MyAllocator::Alloc(const size_t size_) {
