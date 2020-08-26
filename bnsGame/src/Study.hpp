@@ -5,6 +5,8 @@
 namespace bnsGame {
     class Study : public MyScene::Scene {
     private:
+        bool m_isChangeScene;
+
         int32_t m_parentNum;
         int32_t m_geneNum;
 

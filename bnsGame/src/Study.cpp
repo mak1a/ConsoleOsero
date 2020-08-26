@@ -2,10 +2,12 @@
 #include <thread>
 #include <Windows.h>
 #include <string>
+#include <conio.h>
 
 bnsGame::Study::Study(const InitData& init_)
 : IScene(init_)
-, m_parentNum(0)
+, m_isChangeScene(false)
+, m_parentNum(10)
 , m_geneNum(1)
 , m_turn(Turn::Player)
 , m_aspect(((m_turn == Turn::Player) ? Self : Enemy))
@@ -14,16 +16,22 @@ bnsGame::Study::Study(const InitData& init_)
 , m_state(StudyState::Studying) {
     ClearDisplay();
 
-    std::cout << "世代数を入力してください。" << std::endl;
-    std::cout << "奇数を入力した場合、+1されます。また、入力の最小値4未満を入力した場合、世代数は4です。" << std::endl;
-    std::cout << ">> ";
-    std::cin >> m_parentNum;
-    if (m_parentNum % 2 != 0) {
-        ++m_parentNum;
+    std::cout << "AIの評価値を学習します。" << std::endl;
+    std::cout << "現在のAIの強さを変えますか？(y or n)" << std::endl;
+    
+    for (std::string s; ; std::cout << "yかnを入力してください。" << std::endl) {
+        std::cout << ">>";
+        std::cin >> s;
+        if (s == "n" || s == "N") {
+            m_isChangeScene = true;
+            return;
+        }
+        if (s != "y" || s != "Y") {
+            break;
+        }
     }
-    if (m_parentNum < 4) {
-        m_parentNum = 4;
-    }
+
+    std::cout << "学習中です。30秒～1分ほど\nお待ちください。";
 
     for (uint32_t i{}; i < static_cast<uint32_t>(m_parentNum); ++i) {
         m_winNums.emplace_back(static_cast<uint32_t>(0), i);
@@ -39,7 +47,7 @@ bnsGame::Study::Study(const InitData& init_)
         m_turn = Turn::Result;
     }
 
-    std::cout << "プレイヤー番号 : " << m_playerIndex << ", 敵番号 : " << m_enemyIndex;
+    //std::cout << "プレイヤー番号 : " << m_playerIndex << ", 敵番号 : " << m_enemyIndex;
 }
 
 void bnsGame::Study::Init(const Turn& turn_) {
@@ -51,7 +59,7 @@ void bnsGame::Study::Init(const Turn& turn_) {
         m_turn = Turn::Result;
     }
 
-    std::cout << "プレイヤー番号 : " << m_playerIndex << ", 敵番号 : " << m_enemyIndex;
+    //std::cout << "プレイヤー番号 : " << m_playerIndex << ", 敵番号 : " << m_enemyIndex;
 }
 
 void bnsGame::Study::Mating() {
@@ -201,8 +209,7 @@ void bnsGame::Study::EnemyTurn() {
 }
 
 void bnsGame::Study::Result() {
-    std::cout << "対戦終了." << std::endl;
-    const auto winner = m_aspect.GetWinner();
+    const auto winner = m_aspect.GetWinner(true);
     if (winner == Winner::Player) {
         ++m_winNums[m_playerIndex].first;
     }
@@ -224,11 +231,11 @@ void bnsGame::Study::Result() {
             m_enemyIndex = 0;
             m_playerIndex = 0;
 
-            std::cout << "各インデックスの勝利数は、" << std::endl;
+            /*std::cout << "各インデックスの勝利数は、" << std::endl;
             for (const auto& winNum : m_winNums) {
                 std::cout << winNum.first << " ";
             }
-            std::cout << "です。" << std::endl;
+            std::cout << "です。" << std::endl;*/
             ++m_geneNum;
 
             if (m_geneNum <= 10) {
@@ -237,7 +244,7 @@ void bnsGame::Study::Result() {
             }
 
             uint32_t exitCondition = static_cast<uint32_t>((static_cast<double>(m_parentNum) - 1) * 1.8 - 1);
-            std::cout << exitCondition << std::endl;
+            //std::cout << exitCondition << std::endl;
             for (const auto& winNum : m_winNums) {
                 if (winNum.first < exitCondition) {
                     continue;
@@ -246,8 +253,12 @@ void bnsGame::Study::Result() {
                 // 学習した評価値を保存
                 getData().SetValues(m_sikous[winNum.second].GetValues());
 
-                m_sikous[winNum.second].Print();
-                std::cout << std::endl;
+                //m_sikous[winNum.second].Print();
+                std::cout << "\n学習終了しました。" << std::endl;
+
+                std::string s;
+                s = _getch();
+                std::getline(std::cin, s);
                 
                 ChangeScene(Scene::Title);
                 return;
@@ -266,6 +277,10 @@ void bnsGame::Study::Result() {
 }
 
 void bnsGame::Study::Update() {
+    if (m_isChangeScene) {
+        ChangeScene(Scene::Title);
+        return;
+    }
     switch (m_turn) {
     case bnsGame::Turn::Player: {
         std::thread th(&bnsGame::Study::PlayerTurn, this);

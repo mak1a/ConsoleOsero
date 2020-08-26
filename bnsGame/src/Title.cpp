@@ -64,13 +64,54 @@ void bnsGame::Title::Update() {
 
     if (s == 'e') {
         ExitGame();
+        return;
     }
 
     if (s == 'y') {
+        ClearDisplay();
+        std::cout << "難易度を設定してください。" << std::endl;
+        std::cout << "1キー : レベル1" << std::endl;
+        std::cout << "2キー : レベル2" << std::endl;
+        std::cout << "3キー : レベル3" << std::endl;
+
+        for (; true;) {
+            s = _getch();
+            if (s == '1') {
+                getData().depth = 1;
+                break;
+            }
+            if (s == '2') {
+                getData().depth = 3;
+                break;
+            }
+            if (s == '3') {
+                getData().depth = 5;
+                break;
+            }
+        }
+
+        std::cout << "手番を決めてください。" << std::endl;
+        std::cout << "1キー : 先攻" << std::endl;
+        std::cout << "2キー : 後攻" << std::endl;
+
+        for (; true;) {
+            s = _getch();
+            if (s == '1') {
+                getData().turn = Turn::Player;
+                break;
+            }
+            if (s == '2') {
+                getData().turn = Turn::Enemy;
+                break;
+            }
+        }
+
         ChangeScene(bnsGame::Scene::Game);
+        return;
     }
     if (s == 's') {
         ChangeScene(bnsGame::Scene::Study);
+        return;
     }
 }
 
@@ -97,6 +138,8 @@ void bnsGame::Title::DrawColorRect(const Color color_, std::string_view str_) co
 }
 
 void bnsGame::Title::Draw() const {
+    ClearDisplay();
+
     for (uint32_t y{}; y < k_boardHeight; ++y) {
         for (uint32_t x{}; x < k_boardWidth; ++x) {
             if (m_displayBuffer[y][x] == 1) {
@@ -113,9 +156,9 @@ void bnsGame::Title::Draw() const {
         std::cout << std::endl;
     }
 
-    std::cout << "\x1b[42m" << "sキー : AI学習モード　　　　　　　　 " << std::endl;
     std::cout << "\x1b[42m" << "yキー : ゲームモード　　　　　　　　 " << std::endl;
-    std::cout << "\x1b[42m" << "cキー : チュートリアルモード　　　　 " << std::endl;
+    std::cout << "\x1b[42m" << "sキー : AI学習モード　　　　　　　　 " << std::endl;
+    //std::cout << "\x1b[42m" << "cキー : チュートリアルモード　　　　 " << std::endl;
     std::cout << "\x1b[42m" << "eキー : 終了する　　　　　　　　　　 " << std::endl;
     std::cout << "\x1b[42m" << "　　　　　　　　　　　　　　　　　　 " << std::endl;
     

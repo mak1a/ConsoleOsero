@@ -19,6 +19,7 @@ namespace bnsGame {
         explicit Sikou();
         explicit Sikou(const bool isSelected);
         explicit Sikou(const std::array<std::array<int32_t, 10>, 10>& values_, const bool isExperiment_ = true);
+        Sikou(const std::array<std::array<int32_t, 10>, 10>& values_, const int32_t depth_);
 
         void Mutation() {
             for (uint32_t y{1}; y <= 8; ++y) {

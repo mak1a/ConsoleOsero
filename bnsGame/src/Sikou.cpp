@@ -34,8 +34,13 @@ bnsGame::Sikou::Sikou(const std::array<std::array<int32_t, 10>, 10>& values_, co
 , m_depthMax((isExperiment_) ? 1 : 5)
 , m_evaluationValues(values_)
 , m_isExperiment(isExperiment_) {
-    Mutation();
+    if (!isExperiment_) {
+        Mutation();
+    }
 }
+
+bnsGame::Sikou::Sikou(const std::array<std::array<int32_t, 10>, 10>& values_, const int32_t depth_)
+: m_bestPoint(12, utl::Point()), m_depthMax(depth_), m_evaluationValues(values_), m_isExperiment(false) {}
 
 int32_t bnsGame::Sikou::MiniMax(const int32_t isSelfOrEnemy_, Aspect& aspect_, const int32_t depth_) {
     if (aspect_.MakeLegalPuts(isSelfOrEnemy_) <= 0) {

@@ -56,7 +56,7 @@ namespace bnsGame {
 
         uint32_t MakeLegalPuts(const int32_t isSelfOrEnemy_);
 
-        [[nodiscard]] Winner GetWinner() const noexcept {
+        [[nodiscard]] Winner GetWinner(const bool isStudy = false) const noexcept {
             int32_t count{};
             for (uint32_t y{1}; y <= 8; ++y) {
                 for (uint32_t x{1}; x <= 8; ++x) {
@@ -65,19 +65,25 @@ namespace bnsGame {
             }
 
             if (count > 0) {
-                std::cout << "プレイヤーWin!" << std::endl;
-                Print();
+                if (!isStudy) {
+                    std::cout << "プレイヤーWin!" << std::endl;
+                    Print();
+                }
                 return Winner::Player;
             }
 
             if (count < 0) {
-                std::cout << "プレイヤーLose..." << std::endl;
-                Print();
+                if (!isStudy) {
+                    std::cout << "プレイヤーLose..." << std::endl;
+                    Print();
+                }
                 return Winner::Enemy;
             }
 
-            std::cout << "引き分け." << std::endl;
-            Print();
+            if (!isStudy) {
+                std::cout << "引き分け." << std::endl;
+                Print();
+            }
             return Winner::Draw;
         }
 

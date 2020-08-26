@@ -48,10 +48,35 @@ namespace bnsGame {
     class GameData {
     private:
         std::array<std::array<int32_t, 10>, 10> m_evaluationValues;
+        
+        int32_t m_depth;
+
+        Turn m_turn;
+
     public:
+        void SetDepth(const int32_t x_) {
+            m_depth = x_;
+        }
+
+        int32_t GetDepth() const {
+            return m_depth;
+        }
+
+        __declspec(property(get = GetDepth, put = SetDepth)) int32_t depth;
+
+        void SetTurn(const Turn turn_) {
+            m_turn = turn_;
+        }
+
+        Turn GetTurn() const {
+            return m_turn;
+        }
+
+        __declspec(property(get = GetTurn, put = SetTurn)) Turn turn;
+
         std::unique_ptr<allocator::iMemoryAllocator> m_alloc;
 
-        GameData(void* ptr_, const size_t size_) : m_alloc(std::make_unique<allocator::MyAllocator>(ptr_, size_)) {
+        GameData(void* ptr_, const size_t size_) : m_alloc(std::make_unique<allocator::MyAllocator>(ptr_, size_)), m_depth(0) {
             for (int32_t y{}; y < 10; ++y) {
                 for (int32_t x{}; x < 10; ++x) {
                     m_evaluationValues[y][x] = 0;

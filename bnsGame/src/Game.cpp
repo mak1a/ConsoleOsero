@@ -9,11 +9,12 @@ bnsGame::Game::Game(const InitData& init_)
     , m_displayBuffer()
     , m_boards()
     , m_stonePutPos(5, 0)
-    , m_turn(Turn::Player)
+    , m_turn(getData().turn)
     , m_aspect(((m_turn == Turn::Player) ? Self : Enemy))
     , m_playerColor((m_turn == Turn::Player) ? StoneState::Black : StoneState::White)
-    , m_sikou(getData().GetValues(), false)
+    , m_sikou(getData().GetValues(), getData().depth)
     , m_testSikou(true) {
+//    , m_testSikou(getData().GetValues(), getData().depth) {
     ClearDisplay();
 
     for (uint32_t y{ 1 }; y <= 8; ++y) {
@@ -36,8 +37,15 @@ bnsGame::Game::Game(const InitData& init_)
 }
 
 void bnsGame::Game::Input() {
-    std::cout << "座標を入力してください。 : ";
-    std::cin >> m_inputString;
+    std::cout << "\n(間違えた場合rを入力)" << std::endl;
+    
+    std::cout << "座標を入力してください。\nx座標 : ";
+    std::string s;
+    s = _getch();
+    m_inputString = s;
+    std::cout << s << "\ny座標 : ";
+    s = _getch();
+    m_inputString += s;
 
     if (m_inputString == "e") {
         ExitGame();
@@ -255,11 +263,16 @@ void bnsGame::Game::PlayerTurn() {
         return;
     }
 
-    m_stonePutPos.Set(m_inputString[0] - '0', m_inputString[1] - '0');
+    utl::Point pos(m_inputString[0] - '0', m_inputString[1] - '0');
 
-    if ((m_stonePutPos.x < 1 || m_stonePutPos.x > 8) || (m_stonePutPos.y < 1 || m_stonePutPos.y > 8)) {
+    if ((pos.x < 1 || pos.x > 8) || (pos.y < 1 || pos.y > 8)) {
         return;
     }
+    if (m_boards[pos.y][pos.x].GetCurrentState() != StoneState::None) {
+        return;
+    }
+
+    m_stonePutPos.Set(pos);
 
     m_aspect.Put(Self, m_stonePutPos, getData().GetValues());
     if (ChangeStones(m_playerColor)) {
@@ -292,6 +305,7 @@ void bnsGame::Game::Result() {
     std::cout << "エンターキーを押してください。";
     
     std::string s;
+    s = _getch();
     std::getline(std::cin, s);
 
     ChangeScene(Scene::Title);
@@ -327,10 +341,10 @@ void bnsGame::Game::UpdateChangeOut() {
 void bnsGame::Game::Draw() const {
     ClearDisplay();
     
-    std::cout << " 1 2 3 4 5 6 7 8" << std::endl;
+    std::cout << "　　　　　 1 2 3 4 5 6 7 8" << std::endl;
     uint32_t num{1};
     for (uint32_t y{ 1 }; y <= 8; ++y) {
-        std::cout << num;
+        std::cout << "　　　　　" << num;
         for (uint32_t x{ 1 }; x <= 8; ++x) {
             const bool isSelect = (m_stonePutPos == utl::Point(x, y));
             m_boards[y][x].Draw(isSelect);
