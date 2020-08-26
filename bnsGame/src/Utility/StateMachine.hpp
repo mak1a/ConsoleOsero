@@ -24,7 +24,7 @@ namespace bnsGame::utl {
 
         virtual void Update() {}
 
-        virtual void Draw() const {}
+        virtual void Draw(const bool selectPos_) const {}
 
         virtual void Exit() {}
     };
@@ -86,12 +86,12 @@ namespace bnsGame::utl {
             m_state->Update();
         }
 
-        void Draw() const {
+        void Draw(const bool selectPos_) const {
             if (m_state == nullptr) {
                 return;
             }
 
-            m_state->Draw();
+            m_state->Draw(selectPos_);
         }
     };
 }  // namespace bnsGame::utl

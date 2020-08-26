@@ -36,6 +36,7 @@ bnsGame::Game::Game(const InitData& init_)
 }
 
 void bnsGame::Game::Input() {
+    std::cout << "座標を入力してください。 : ";
     std::cin >> m_inputString;
 
     if (m_inputString == "e") {
@@ -287,15 +288,11 @@ void bnsGame::Game::EnemyTurn() {
 
 void bnsGame::Game::Result() {
     auto result = m_aspect.GetWinner();
-    if (result == Winner::Player) {
-        std::cout << "Player Win!" << std::endl;
-    }
-    else if (result == Winner::Enemy) {
-        std::cout << "Player Lose..." << std::endl;
-    }
-    else {
-        std::cout << "Draw" << std::endl;
-    }
+
+    std::cout << "エンターキーを押してください。";
+    
+    std::string s;
+    std::getline(std::cin, s);
 
     ChangeScene(Scene::Title);
 }
@@ -335,7 +332,8 @@ void bnsGame::Game::Draw() const {
     for (uint32_t y{ 1 }; y <= 8; ++y) {
         std::cout << num;
         for (uint32_t x{ 1 }; x <= 8; ++x) {
-            m_boards[y][x].Draw();
+            const bool isSelect = (m_stonePutPos == utl::Point(x, y));
+            m_boards[y][x].Draw(isSelect);
         }
         std::cout << std::endl;
         ++num;

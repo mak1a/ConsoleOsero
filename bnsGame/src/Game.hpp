@@ -32,8 +32,8 @@ namespace bnsGame {
                 : State<StoneState>(StoneState::None)
                 , m_stone(stone_) {}
 
-            void Draw() const override {
-                std::cout << "E";
+            void Draw(const bool selectPos_) const override {
+                std::cout << "\x1b[42mE" << "\x1b[49m";
             }
         };
 
@@ -45,8 +45,12 @@ namespace bnsGame {
                 : State<StoneState>(StoneState::Black)
                 , m_stone(stone_) {}
 
-            void Draw() const override {
-                std::cout << "›";
+            void Draw(const bool selectPos_) const override {
+                if (selectPos_) {
+                    std::cout << "\x1b[43m" << "\x1b[30mœ" << "\x1b[39m" << "\x1b[49m";
+                    return;
+                }
+                std::cout << "\x1b[42m" << "\x1b[30mœ" << "\x1b[39m" << "\x1b[49m";
             }
         };
 
@@ -58,8 +62,12 @@ namespace bnsGame {
                 : State<StoneState>(StoneState::White)
                 , m_stone(stone_) {}
 
-            void Draw() const override {
-                std::cout << "œ";
+            void Draw(const bool selectPos_) const override {
+                if (selectPos_) {
+                    std::cout << "\x1b[43m" << "\x1b[37mœ" << "\x1b[39m" << "\x1b[49m";
+                    return;
+                }
+                std::cout << "\x1b[42m" << "\x1b[37mœ" << "\x1b[39m" << "\x1b[49m";
             }
         };
 
