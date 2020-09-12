@@ -83,12 +83,12 @@ namespace bnsGame {
 
     public:
         Stone(const StoneState& state_) {
-            InitializeStateMachine();
-            GoToState(state_);
+            Initialize();
+            ChangeState(state_);
         }
         Stone() : Stone(StoneState::Wall) {}
 
-        void InitializeStateMachine() override {
+        void Initialize() override {
             AddState(std::make_shared<None>(*this));
             AddState(std::make_shared<Black>(*this));
             AddState(std::make_shared<White>(*this));

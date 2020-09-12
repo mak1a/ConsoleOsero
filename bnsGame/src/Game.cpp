@@ -19,14 +19,14 @@ bnsGame::Game::Game(const InitData& init_)
 
     for (uint32_t y{ 1 }; y <= 8; ++y) {
         for (uint32_t x{ 1 }; x <= 8; ++x) {
-            m_boards[y][x].GoToState(StoneState::None);
+            m_boards[y][x].ChangeState(StoneState::None);
         }
     }
     
-    m_boards[4][4].GoToState(StoneState::White);
-    m_boards[5][5].GoToState(StoneState::White);
-    m_boards[5][4].GoToState(StoneState::Black);
-    m_boards[4][5].GoToState(StoneState::Black);
+    m_boards[4][4].ChangeState(StoneState::White);
+    m_boards[5][5].ChangeState(StoneState::White);
+    m_boards[5][4].ChangeState(StoneState::Black);
+    m_boards[4][5].ChangeState(StoneState::Black);
 
     int32_t turn = (m_turn == Turn::Player) ? Self : Enemy;
     if (m_aspect.MakeLegalPuts(turn) <= 0) {
@@ -80,9 +80,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (++y; y < m_stonePutPos.y; ++y) {
-                m_boards[y][m_stonePutPos.x].GoToState(stone_);
+                m_boards[y][m_stonePutPos.x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -103,9 +103,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (--y; y > m_stonePutPos.y; --y) {
-                m_boards[y][m_stonePutPos.x].GoToState(stone_);
+                m_boards[y][m_stonePutPos.x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -126,9 +126,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (--x; x > m_stonePutPos.x; --x) {
-                m_boards[m_stonePutPos.y][x].GoToState(stone_);
+                m_boards[m_stonePutPos.y][x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -149,9 +149,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (++x; x < m_stonePutPos.x; ++x) {
-                m_boards[m_stonePutPos.y][x].GoToState(stone_);
+                m_boards[m_stonePutPos.y][x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -173,9 +173,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (++y, --x; y < m_stonePutPos.y; ++y, --x) {
-                m_boards[y][x].GoToState(stone_);
+                m_boards[y][x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -197,9 +197,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (--y, --x; y > m_stonePutPos.y; --y, --x) {
-                m_boards[y][x].GoToState(stone_);
+                m_boards[y][x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -221,9 +221,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (++y, ++x; y < m_stonePutPos.y; ++y, ++x) {
-                m_boards[y][x].GoToState(stone_);
+                m_boards[y][x].ChangeState(stone_);
             }
             ret = true;
         }
@@ -245,9 +245,9 @@ bool bnsGame::Game::ChangeStones(const StoneState & stone_) {
             }
 
             // 実際に石を置く
-            m_boards[m_stonePutPos.y][m_stonePutPos.x].GoToState(stone_);
+            m_boards[m_stonePutPos.y][m_stonePutPos.x].ChangeState(stone_);
             for (--y, ++x; y > m_stonePutPos.y; --y, ++x) {
-                m_boards[y][x].GoToState(stone_);
+                m_boards[y][x].ChangeState(stone_);
             }
             ret = true;
         }

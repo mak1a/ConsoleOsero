@@ -254,7 +254,7 @@ void bnsGame::Study::Result() {
                 getData().SetValues(m_sikous[winNum.second].GetValues());
 
                 //m_sikous[winNum.second].Print();
-                std::cout << "\n学習終了しました。" << std::endl;
+                std::cout << "\n学習終了しました。\nエンターキーを押してください。" << std::endl;
 
                 std::string s;
                 s = _getch();

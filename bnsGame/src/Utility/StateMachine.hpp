@@ -49,7 +49,7 @@ namespace bnsGame::utl {
             return m_state->GetID();
         }
 
-        void GoToState(const T nextStateID_) {
+        void ChangeState(const T nextStateID_) {
             auto it = m_stateList.find(nextStateID_);
             if (it == m_stateList.end()) {
                 return;
@@ -63,7 +63,7 @@ namespace bnsGame::utl {
             m_state->Enter();
         }
 
-        virtual void InitializeStateMachine() = 0;
+        virtual void Initialize() = 0;
 
         void AddState(const std::shared_ptr<State<T>>& state_) {
             if (state_ == nullptr) {

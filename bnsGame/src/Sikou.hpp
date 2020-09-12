@@ -5,7 +5,7 @@
 namespace bnsGame {
     class Sikou {
         std::array<std::array<int32_t, 10>, 10> m_evaluationValues;
-        
+
         std::vector<utl::Point> m_bestPoint;
 
         int32_t m_depthMax;
@@ -13,8 +13,11 @@ namespace bnsGame {
         bool m_isExperiment;
 
         [[nodiscard]] int32_t MiniMax(const int32_t isSelfOrEnemy_, Aspect& aspect_, const int32_t depth_);
-    
+
+        [[nodiscard]] int32_t AlphaBeta(const int32_t isSelfOrEnemy_, Aspect& aspect_, int32_t alpha_, int32_t beta_, const int32_t depth_);
+
         [[nodiscard]] int32_t ReadThrough(const int32_t isSelfOrEnemy_, Aspect& aspect_, const int32_t depth_);
+
     public:
         explicit Sikou();
         explicit Sikou(const bool isSelected);

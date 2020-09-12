@@ -156,11 +156,11 @@ void bnsGame::Title::Draw() const {
         std::cout << std::endl;
     }
 
-    std::cout << "\x1b[42m" << "yキー : ゲームモード　　　　　　　　 " << std::endl;
-    std::cout << "\x1b[42m" << "sキー : AI学習モード　　　　　　　　 " << std::endl;
+    std::cout << "\x1b[42m" << "yキー : ゲームモード　　　　　　　　  " << std::endl;
+    std::cout << "\x1b[42m" << "sキー : AI学習モード　　　　　　　　  " << std::endl;
     //std::cout << "\x1b[42m" << "cキー : チュートリアルモード　　　　 " << std::endl;
-    std::cout << "\x1b[42m" << "eキー : 終了する　　　　　　　　　　 " << std::endl;
-    std::cout << "\x1b[42m" << "　　　　　　　　　　　　　　　　　　 " << std::endl;
+    std::cout << "\x1b[42m" << "eキー : 終了する　　　　　　　　　　  " << std::endl;
+    std::cout << "\x1b[42m" << "　　　　　　　　　　　　　　　　　　  " << std::endl;
     
     std::cout << "\x1b[49m" << std::endl;
 }

@@ -9,12 +9,6 @@
 
 namespace bnsGame::utl {
 
-    /// <summary>
-    /// シーン管理
-    /// </summary>
-    /// <remarks>
-    /// State にはシーンを区別するキーの型、Data にはシーン間で共有するデータの型を指定します。
-    /// </remarks>
     template<class State, class Data>
     class SceneMaster;
 
@@ -30,9 +24,7 @@ namespace bnsGame::utl {
         Uncopyable& operator=(const Uncopyable&) = delete;
     };
 
-    /// <summary>
-    /// シーン・インタフェース
-    /// </summary>
+    // インターフェース
     template<class State, class Data>
     class IScene : Uncopyable {
     public:
@@ -64,36 +56,12 @@ namespace bnsGame::utl {
 
         virtual ~IScene() {}
 
-        /// <summary>
-        /// シーン遷移時（in）の更新
-        /// </summary>
-        /// <returns>
-        /// なし
-        /// </returns>
         virtual void UpdateChangeIn() {}
 
-        /// <summary>
-        /// 通常時の更新
-        /// </summary>
-        /// <returns>
-        /// なし
-        /// </returns>
         virtual void Update() {}
 
-        /// <summary>
-        /// シーン遷移時（out）の更新
-        /// </summary>
-        /// <returns>
-        /// なし
-        /// </returns>
         virtual void UpdateChangeOut() {}
 
-        /// <summary>
-        /// 通常時の描画
-        /// </summary>
-        /// <returns>
-        /// なし
-        /// </returns>
         virtual void Draw() const {}
 
     protected:
@@ -101,55 +69,20 @@ namespace bnsGame::utl {
             return m_state;
         }
 
-        /// <summary>
-        /// 共有データへの参照を取得します。
-        /// </summary>
-        /// <returns>
-        /// 共有データへの参照
-        /// </returns>
         [[nodiscard]] Data_t& getData() const {
             return *m_data;
         }
 
-        /// <summary>
-        /// シーンの変更を通知します。
-        /// </summary>
-        /// <param name="state">
-        /// 次のシーンのキー
-        /// </param>
-        /// <param name="transitionTimeMillisec">
-        /// フェードイン・アウトの時間（ミリ秒）
-        /// </param>
-        /// <param name="crossFade">
-        /// クロスフェードを有効にするか
-        /// </param>
-        /// <returns>
-        /// シーンの変更が可能でフェードイン・アウトが開始される場合 true, それ以外の場合は false
-        /// </returns>
         bool ChangeScene(const State_t& state) {
             return m_manager->ChangeScene(state);
         }
 
-        /// <summary>
-        /// ゲームの終了を通知します。
-        /// </summary>
-        /// <remarks>
-        /// この関数を呼ぶと、以降の SceneMaster::Update() / UpdateAndDraw() が false を返します。
-        /// </remarks>
-        /// <returns>
-        /// なし
-        /// </returns>
         void ExitGame() {
             return m_manager->ExitGame();
         }
     };
 
-    /// <summary>
-    /// シーン管理
-    /// </summary>
-    /// <remarks>
-    /// State にはシーンを区別するキーの型、Data にはシーン間で共有するデータの型を指定します。
-    /// </remarks>
+    // シーン遷移用クラス
     template<class State, class Data = detail::EmptyData>
     class SceneMaster {
     private:
@@ -163,10 +96,6 @@ namespace bnsGame::utl {
 
         Scene_t m_current;
 
-        Scene_t m_next;
-
-        Scene_t m_previous;
-
         State m_currentState;
 
         State m_nextState;
@@ -177,7 +106,7 @@ namespace bnsGame::utl {
 
         bool m_isEnd = false;
 
-        bool UpdateSingle() {
+        bool UpdateState() {
             if (m_transitionState == TransitionState::ChangeOut) {
                 m_current = nullptr;
 
@@ -216,41 +145,15 @@ namespace bnsGame::utl {
         }
 
     public:
-        /// <summary>
-        /// シーンのインタフェース
-        /// </summary>
+        // 各シーンクラスで継承する
         using Scene = IScene<State, Data>;
 
-        /// <summary>
-        /// シーン管理を初期化します。
-        /// </summary>
-        /// <param name="option">
-        /// シーン管理のオプション
-        /// </param>
         SceneMaster() : m_data(std::make_shared<Data>()) {}
 
-        /// <summary>
-        /// シーン管理を初期化します。
-        /// </summary>
-        /// <param name="data">
-        /// 共有データ
-        /// </param>
-        /// <param name="option">
-        /// シーン管理のオプション
-        /// </param>
         explicit SceneMaster(const std::shared_ptr<Data>& data) : m_data(data) {}
 
         ~SceneMaster() = default;
 
-        /// <summary>
-        /// シーンを追加します。
-        /// </summary>
-        /// <param name="state">
-        /// シーンのキー
-        /// </param>
-        /// <returns>
-        /// 追加に成功した場合 true, それ以外の場合は false
-        /// </returns>
         template<class Scene>
         SceneMaster& Add(const State& state) {
             typename Scene::InitData initData(state, m_data, this);
@@ -273,15 +176,6 @@ namespace bnsGame::utl {
             return *this;
         }
 
-        /// <summary>
-        /// 最初のシーンを初期化します。
-        /// </summary>
-        /// <param name="state">
-        /// 最初のシーン
-        /// </param>
-        /// <returns>
-        /// 初期化に成功した場合 true, それ以外の場合は false
-        /// </returns>
         bool Init(const State& state) {
             if (m_current) {
                 return false;
@@ -306,12 +200,6 @@ namespace bnsGame::utl {
             return true;
         }
 
-        /// <summary>
-        /// シーンを更新します。
-        /// </summary>
-        /// <returns>
-        /// シーンの更新に成功した場合 true, それ以外の場合は false
-        /// </returns>
         bool UpdateScene() {
             if (IsEnd()) {
                 return false;
@@ -326,15 +214,9 @@ namespace bnsGame::utl {
                 }
             }
 
-            return UpdateSingle();
+            return UpdateState();
         }
 
-        /// <summary>
-        /// シーンを描画します。
-        /// </summary>
-        /// <returns>
-        /// なし
-        /// </returns>
         void DrawScene() const {
             if (!m_current) {
                 return;
@@ -345,12 +227,6 @@ namespace bnsGame::utl {
             }
         }
 
-        /// <summary>
-        /// シーンの更新と描画を行います。
-        /// </summary>
-        /// <returns>
-        /// シーンの更新に成功した場合 true, それ以外の場合は false
-        /// </returns>
         bool Update() {
             if (!UpdateScene()) {
                 return false;
@@ -361,41 +237,14 @@ namespace bnsGame::utl {
             return true;
         }
 
-        /// <summary>
-        /// 共有データを取得します。
-        /// </summary>
-        /// <returns>
-        /// 共有データへのポインタ
-        /// </returns>
         [[nodiscard]] std::shared_ptr<Data> get() {
             return m_data;
         }
 
-        /// <summary>
-        /// 共有データを取得します。
-        /// </summary>
-        /// <returns>
-        /// 共有データへのポインタ
-        /// </returns>
         [[nodiscard]] const std::shared_ptr<const Data> get() const {
             return m_data;
         }
 
-        /// <summary>
-        /// シーンを変更します。
-        /// </summary>
-        /// <param name="state">
-        /// 次のシーンのキー
-        /// </param>
-        /// <param name="transitionTimeMillisec">
-        /// フェードイン・アウトの時間（ミリ秒）
-        /// </param>
-        /// <param name="crossFade">
-        /// クロスフェードを有効にするか
-        /// </param>
-        /// <returns>
-        /// シーンの変更が可能でフェードイン・アウトが開始される場合 true, それ以外の場合は false
-        /// </returns>
         bool ChangeScene(const State& state) {
             if (m_factories.find(state) == m_factories.end()) {
                 return false;
@@ -409,15 +258,6 @@ namespace bnsGame::utl {
             return true;
         }
 
-        /// <summary>
-        /// ゲームの終了を通知します。
-        /// </summary>
-        /// <remarks>
-        /// この関数を呼ぶと、以降の SceneMaster::Update() / UpdateAndDraw() が false を返します。
-        /// </remarks>
-        /// <returns>
-        /// なし
-        /// </returns>
         void ExitGame() {
             m_isEnd = true;
         }
